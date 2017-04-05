@@ -20,7 +20,7 @@ class MainApplication : Application() {
 
     companion object {
 
-        private var instance: MainApplication? = null
+        private lateinit var instance: MainApplication
 
         fun get(): Application {
             return instance
