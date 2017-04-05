@@ -49,18 +49,8 @@ class MainActivity : AppCompatActivity() {
                 .map(Geocode::getLocation)
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location.lng) }
                 .timeout(40, TimeUnit.SECONDS)
-                .subscribe(object : Observer<Weather> {
-                    override fun onCompleted() {}
-
-                    override fun onError(error: Throwable) {
-                        Snackbar.make(view, "Weather Error : " + error, Snackbar.LENGTH_LONG).show()
-                    }
-
-                    override fun onNext(weather: Weather) {
-                        updateWeatherUI(weather, location)
-                    }
-                })
-
+                .subscribe({ weather -> updateWeatherUI(weather, location) },
+                        { error -> Snackbar.make(view, "Weather Error : " + error, Snackbar.LENGTH_LONG).show() })
     }
 
     fun updateWeatherUI(weather: Weather?, location: String) {
