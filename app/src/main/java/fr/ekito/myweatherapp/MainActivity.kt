@@ -13,7 +13,10 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import fr.ekito.myweatherlibrary.WeatherSDK
+import fr.ekito.myweatherlibrary.json.geocode.Geocode
+import fr.ekito.myweatherlibrary.json.geocode.getLocation
 import fr.ekito.myweatherlibrary.json.weather.Weather
+import fr.ekito.myweatherlibrary.json.weather.getDailyForecasts
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import rx.Observer
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity(), MainActivityWeatherCallback {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).show()
 
         WeatherSDK.getGeocode(location)
-                .map { geocode -> WeatherSDKUtil.extractLocation(geocode) }
+                .map(Geocode::getLocation)
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location.lng) }
                 .timeout(40, TimeUnit.SECONDS)
                 .subscribe(object : Observer<Weather> {
@@ -70,7 +73,7 @@ class MainActivity : AppCompatActivity(), MainActivityWeatherCallback {
             val dateFormat = android.text.format.DateFormat.getDateFormat(MainApplication.get())
             weather_title.text = getString(R.string.weather_title) + " " + location + "\n" + dateFormat.format(now) + " " + timeFormat.format(now)
 
-            val forecasts = WeatherSDKUtil.getDailyForecasts(weather)
+            val forecasts = weather.getDailyForecasts()
 
             if (forecasts.size == 4) {
                 setForecastForToday(forecasts[0], weather_main_text, weather_main_icon)
