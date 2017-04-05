@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import rx.Observer
 
-class MainActivity : AppCompatActivity(), MainActivityWeatherCallback {
+class MainActivity : AppCompatActivity() {
 
     private val now = Date()
 
@@ -35,13 +35,13 @@ class MainActivity : AppCompatActivity(), MainActivityWeatherCallback {
         weather_forecast_layout.visibility = View.GONE
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
-        fab.setOnClickListener { view -> DialogHelper.locationDialog(view, this@MainActivity) }
+        fab.setOnClickListener { view -> DialogHelper.locationDialog(view, { location -> getWeatherData(view, location)}) }
     }
 
     /**
      * Retrieve Weather Data from the REST API
      */
-    override fun getWeatherData(view: View, location: String) {
+    fun getWeatherData(view: View, location: String) {
 
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).show()
 
