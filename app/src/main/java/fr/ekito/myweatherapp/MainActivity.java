@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityWeath
                 .map(new Func1<Geocode, Location>() {
                     @Override
                     public Location call(Geocode geocode) {
-                        return WeatherSDKUtil.extractLocation(geocode);
+                        return WeatherSDKUtil.INSTANCE.extractLocation(geocode);
                     }
                 })
                 .switchMap(new Func1<Location, Observable<Weather>>() {
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityWeath
             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(MainApplication.get());
             title.setText(getString(R.string.weather_title) + " " + location + "\n" + dateFormat.format(now) + " " + timeFormat.format(now));
 
-            List<DailyForecastModel> forecasts = WeatherSDKUtil.getDailyForecasts(weather);
+            List<DailyForecastModel> forecasts = WeatherSDKUtil.INSTANCE.getDailyForecasts(weather);
 
             if (forecasts.size() == 4) {
                 setForecastForToday(forecasts.get(0), forecastToday, iconToday);
@@ -159,12 +159,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityWeath
     }
 
     private void setForecastForToday(DailyForecastModel dayX, TextView forecastDayX, IconTextView iconDayX) {
-        forecastDayX.setText("Today : " + dayX.getForecastString() + "\n" + dayX.getTemperatureString());
+        forecastDayX.setText("Today : " + dayX.getForecast() + "\n" + dayX.getTemperatureString());
         iconDayX.setText(dayX.getIcon());
     }
 
     private void setForecastForDayX(DailyForecastModel dayX, int idx, TextView forecastDayX, IconTextView iconDayX, TextView tempDayX) {
-        forecastDayX.setText("Day " + idx + ": " + dayX.getForecastString());
+        forecastDayX.setText("Day " + idx + ": " + dayX.getForecast());
         if (tempDayX != null) {
             tempDayX.setText(dayX.getTemperatureString());
         }
